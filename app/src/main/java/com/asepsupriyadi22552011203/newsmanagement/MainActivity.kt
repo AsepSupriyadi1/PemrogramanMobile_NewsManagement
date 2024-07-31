@@ -15,11 +15,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import android.app.ProgressDialog
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.Toast
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -34,6 +39,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var itemList: MutableList<ItemList>
     private lateinit var db: FirebaseFirestore
     private lateinit var progressDialog: ProgressDialog
+    private lateinit var mAuth: FirebaseAuth
+
+    private lateinit var logoutButton: Button
 
     override fun onStart() {
         super.onStart()
@@ -54,10 +62,12 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
         db = FirebaseFirestore.getInstance()
+        mAuth = FirebaseAuth.getInstance()
 
         // Inisialisasi RecyclerView
-        recyclerView = findViewById(R.id.recycler_view);
-        floatingActionButton = findViewById(R.id.floatAddNews);
+        recyclerView = findViewById(R.id.recycler_view)
+        floatingActionButton = findViewById(R.id.floatAddNews)
+        logoutButton = findViewById(R.id.btnLogout)
 
         progressDialog = ProgressDialog(this@MainActivity).apply {
             setTitle("Loading...")
@@ -87,6 +97,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        logoutButton.setOnClickListener {
+            mAuth.signOut()
+            Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
 
     }
 
@@ -97,7 +116,7 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnCompleteListener { task ->
                 if(task.isSuccessful){
-                    itemList.clear();
+                    itemList.clear()
                     for(document in task.result) {
                         val item = ItemList(
                             document.id,
@@ -114,6 +133,25 @@ class MainActivity : AppCompatActivity() {
                 }
                 progressDialog.dismiss()
             }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if(id == R.id.action_logout){
+            mAuth.signOut()
+            Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
+            startActivity(intent)
+            finish()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
 

@@ -6,25 +6,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.annotation.Nullable;
+import androidx.annotation.Nullable
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.HashMap
+import java.util.Map
 
 
 class NewsAdd : AppCompatActivity() {
@@ -151,6 +150,10 @@ class NewsAdd : AppCompatActivity() {
                     progressDialog.dismiss()
                     Toast.makeText(this@NewsAdd, "News updated successfully", Toast.LENGTH_SHORT).show()
                     finish()
+                    title.setText("")
+                    desc.setText("")
+                    imageView.setImageResource(0) // Clear the Imageview
+                    goToDashboard()
                 }
                 .addOnFailureListener { e ->
                     progressDialog.dismiss()
@@ -166,6 +169,7 @@ class NewsAdd : AppCompatActivity() {
                     title.setText("")
                     desc.setText("")
                     imageView.setImageResource(0) // Clear the Imageview
+                    goToDashboard()
                 }
                 .addOnFailureListener { e ->
                     progressDialog.dismiss()
@@ -173,6 +177,11 @@ class NewsAdd : AppCompatActivity() {
                     Log.w("NewsAdd", "Error adding document", e)
                 }
         }
+    }
+
+    private fun goToDashboard(){
+        val intent=Intent(this,MainActivity::class.java)
+        startActivity(intent)
     }
 
 }
